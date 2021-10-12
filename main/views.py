@@ -7,6 +7,12 @@ from hunspell import Hunspell
 
 h = Hunspell()
 
+def setLanguage(langstring):
+    if langstring == 'en':
+        h = Hunspell()
+    if langstring == 'es':
+        h = Hunspell('es_AR', hunspell_data_dir='spell-checker/dictionaries/es_AR/')
+
 def format_list (new_word_list):
     for word in new_word_list:
         print(word, end=", ")
