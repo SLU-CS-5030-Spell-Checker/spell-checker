@@ -6,36 +6,31 @@
 
 body
 .navbar {
-  overflow: hidden;
+  overflow: none;
   background-color: #333;
   position: fixed;
   top: 0;
   width: 100%;
 }
 
-</style>
-
-<!--css for menu-->
-<style>
   .menu {
+display: inline-block;
 background: #fff;
-width: 100px;
+width: auto;
 padding: 3px 10px;
 box-shadow: 0 0 10px -3px rgba(0, 0, 0, .3);
 border: 1px solid #ccc;
 position: absolute;
-}
-</style>
-
-<!--css for editor-->
-
-<style>
-  #editor {
-    position: absolute;
-    width: 500px;
-    height: 400px;
+text-align:left;
   }
+
+  #myInput {height: 200px; width: 300px; border:1px solid black;}
+        #suggestions {height: auto; width: auto; ; border:1px solid black; background-color: white; padding: 5px; display: none;}
+        #suggestionsList {list-style-type: none; padding-inline-start: 0px; margin-block-start: 0px; margin-block-end: 0px}
+        .suggestionText:hover {color: #2693ff;cursor: pointer; }
+        
 </style>
+
 
 
 <!--load in jquery, bootstrap, ajax-->
@@ -61,6 +56,15 @@ position: absolute;
   </a>
 
  </div>
+ <div class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Language Option
+  <span class="caret"></span></button>
+  <ul class="dropdown-menu">
+    <li onclick="toggleLanguage('English')"><a href="ajax-test-view">English</a></li>
+    <li onclick="toggleLanguage('Irish')"><a href="ajax-test-view_irish">Irish</a></li>
+  
+  </ul>
+</div>
 </nav>
 <br><br><br><br>
 
@@ -68,70 +72,102 @@ position: absolute;
   <!--text area-->
   <textarea class="form-control" id="myInput" rows="18" ></textarea>
     <p id="log"></p>
-  <div id="suggestions" class="menu">
-    <!-- <p> {{ output }} </p> -->
+  <div id="suggestions">
+    <ul id="suggestionsList">
+    </ul>
   </div>
 
 <!--submit and clear buttons-->
- <button type="button" class="btn btn-outline-dark">Submit</button>
+ <!-- <button type="button" class="btn btn-outline-dark">Submit</button> -->
  <button type="button"  onclick="document.getElementById('myInput').value = ''" class="btn btn-outline-dark">Clear</button>
 
 </div>
 
 <script>
+$('#myInput').mouseup(function(event){
+  if(event.button == 2){
+    var myInput = $('#myInput').get(0)
+    selectionStart = myInput.selectionStart
+    selectionEnd = myInput.selectionEnd
+    if(myInput.value.substring(selectionEnd - 1, selectionEnd) == ' ')
+    {
+      selectionEnd = selectionEnd - 1
+    }
+    if((selectionEnd - selectionStart) > 0){
+      $('#suggestionsList').empty()
+      selection = myInput.value.substring(selectionStart, selectionEnd)
+      console.log(selection)
+      $.ajax({
+      type: "GET",
+      url:  'spell_check',
+      data: {'word':selection}, 
+      success: function (response) {
+   
+          const hunspellSuggestions= response['output']
+        
+          hunspellSuggestions.forEach((item)=>{
+
+            $('#suggestionsList').append('<li class=suggestionText onmouseup="suggestionMouseUp(event)">' + item + '</li>')
+          })
+
+          $('#suggestions').css({top: event.clientY, left: event.clientX, position:'absolute'});
+          $('#suggestions').show()
+
+        }
+      });
+    }
+    
+
+  }
+  
+})
+function suggestionMouseUp(event){
+  if(event.button == 0){
+    var myInput = $('#myInput').get(0)
+    var myInputUpdatedText = myInput.value.substring(0, selectionStart) + event.target.innerText + myInput.value.substring(selectionEnd, myInput.value.length)
+    myInput.value = myInputUpdatedText
+  }
+}
+$(document).mouseup(function(event){
+  if((event.button == 0) && ($('#suggestions').css('display') == 'block')){
+    $('#suggestions').css({display:'none'});
+  }
+})
   //Log selection to console
   function logSelection(event) {
     const log = document.getElementById('log');
     const selection = event.target.value.substring(event.target.selectionStart, event.target.selectionEnd);
     log.textContent = `You selected: ${selection}`;
-    console.log(selection) 
-
-//Test code for displaying words verically in menu
-  const verticize = s => {
-  const words = s.split(/\s+/);
-  return [...Array(Math.max(...words.map(e => e.length)))]
-    .map((_, i) => 
-      [...Array(words.length)]
-        .map((_, j) => words[j][i] || " ").join("").trimEnd());
-};
+    console.log(selection)} 
     
-   // ajax call to grab text selection 
-    $.ajax({
-      type: "GET",
-      url:  'spell_check',
-      data: {'word':selection}, 
-      success: function (response) {
-          console.log(response);
-          console.log(response);
-          console.log(response['output']);
-          document.getElementById('suggestions').innerText=response['output'];
-          console.log(verticize(innerText=response['output']));
-      }
-     });
-  }
-
+   
   const textarea = document.querySelector('textarea');
   textarea.onselect = logSelection;
   console.log(textarea) 
-  </script>
   
-  <script type="text/javascript">
+  
+  
   // right click and generate dropdown menu
   $(document).ready(function() { 
+    window.addEventListener('contextmenu', function (e) {
+        e.preventDefault(); 
+    }, false);
   var menu = $('.menu');//get the menu
-  $(document).on('contextmenu', function(e) {// right-click
-  e.preventDefault();//Prevent the default action: the normal right-click-menu to show
-  menu.css({
-    display: 'block',//show the menu
-    top: e.pageY,//make the menu be where you click (y)
-    left: e.pageX//make the menu be where you click (x)
+
   });
-  });
-  $(document).click(function() { //When you left-click
-  menu.css({ display: 'none' });//Hide the menu
-  });
-  });
-  </script>
+  
+
+  
+  function toggleLanguage(language) {
+    let description = document.getElementById("description");
+    if (language === "Irish") {
+      description.innerHTML = "Show Irish Text";
+    }
+    else {
+      description.innerHTML = "Show English Text";
+    }
+  }
+</script>
 
 </body>
 </html>
