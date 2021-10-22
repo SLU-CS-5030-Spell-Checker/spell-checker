@@ -23,9 +23,6 @@ def spell_check(request):
     print(replaced_string)## for testing in console
     word_list= h.suggest(replaced_string)
     print(word_list)## for testing in console
-    separator = ", "
-    new_word_list= separator.join(word_list)
-    transformed_string=new_word_list.replace(",","")
-    data ={'output': transformed_string}
+    data ={'output': word_list}
     print(data)## for testing in console
     return JsonResponse(data)
