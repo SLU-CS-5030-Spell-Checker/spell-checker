@@ -11,7 +11,7 @@ h = Hunspell()
 
 ## render views function
 def index(request):
-    return render(request,"main/index.html")
+    return render(request,"main/index_irish.html")
 
 ## hunspell check function
 def spell_check(request):

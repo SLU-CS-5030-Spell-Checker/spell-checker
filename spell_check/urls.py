@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from main import views
+from main import views_irish
 from django.urls import path, include
 
 
@@ -22,7 +23,8 @@ urlpatterns = [
 	path('admin/', admin.site.urls),
     path('spell_check', views.spell_check, name='spell_check'),
     path('ajax-test-view', views.index, name='ajax-test-view'),
-    #path('ajax-test-view/<str:word>/', views.index,name='ajax-test-view'),
+    path('spell_check_irish', views_irish.spell_check, name='spell_check'),
+    path('ajax-test-view_irish', views_irish.index, name='ajax-test-view_irish'),
 	path('', include('main.urls'))
 ]
 
