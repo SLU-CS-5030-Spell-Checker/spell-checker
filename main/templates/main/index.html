@@ -1,7 +1,137 @@
-<form action = "" method = "get">
-  <label for="enter_text">Enter Text: </label>
-  <input id="enter_text" type="text" name="enter_text">
-  <input type="submit" value="OK">
-  <p> {{ output }} </p>
-</form>
+<html>
+<head>
 
+<!--css for navbar-->
+<style>
+
+body
+.navbar {
+  overflow: hidden;
+  background-color: #333;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+</style>
+
+<!--css for menu-->
+<style>
+  .menu {
+background: #fff;
+width: 100px;
+padding: 3px 10px;
+box-shadow: 0 0 10px -3px rgba(0, 0, 0, .3);
+border: 1px solid #ccc;
+position: absolute;
+}
+</style>
+
+<!--css for editor-->
+
+<style>
+  #editor {
+    position: absolute;
+    width: 500px;
+    height: 400px;
+  }
+</style>
+
+
+<!--load in jquery, bootstrap, ajax-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.js" type="text/javascript"></script>
+<script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+</head>
+<body>
+
+<!--navigation bar-->
+<nav class="navbar navbar-light bg-light">
+  <div id="main">
+  <span style="font-size:30px;cursor:pointer"</span>
+<a class="navbar-brand" href="#" >
+    Spell <strike>Chcek</strike>Check
+  </a>
+
+ </div>
+</nav>
+<br><br><br><br>
+
+<div align="center">
+  <!--text area-->
+  <textarea class="form-control" id="myInput" rows="18" ></textarea>
+    <p id="log"></p>
+  <div id="suggestions" class="menu">
+    <!-- <p> {{ output }} </p> -->
+  </div>
+
+<!--submit and clear buttons-->
+ <button type="button" class="btn btn-outline-dark">Submit</button>
+ <button type="button"  onclick="document.getElementById('myInput').value = ''" class="btn btn-outline-dark">Clear</button>
+
+</div>
+
+<script>
+  //Log selection to console
+  function logSelection(event) {
+    const log = document.getElementById('log');
+    const selection = event.target.value.substring(event.target.selectionStart, event.target.selectionEnd);
+    log.textContent = `You selected: ${selection}`;
+    console.log(selection) 
+
+//Test code for displaying words verically in menu
+  const verticize = s => {
+  const words = s.split(/\s+/);
+  return [...Array(Math.max(...words.map(e => e.length)))]
+    .map((_, i) => 
+      [...Array(words.length)]
+        .map((_, j) => words[j][i] || " ").join("").trimEnd());
+};
+    
+   // ajax call to grab text selection 
+    $.ajax({
+      type: "GET",
+      url:  'spell_check',
+      data: {'word':selection}, 
+      success: function (response) {
+          console.log(response);
+          console.log(response);
+          console.log(response['output']);
+          document.getElementById('suggestions').innerText=response['output'];
+          console.log(verticize(innerText=response['output']));
+      }
+     });
+  }
+
+  const textarea = document.querySelector('textarea');
+  textarea.onselect = logSelection;
+  console.log(textarea) 
+  </script>
+  
+  <script type="text/javascript">
+  // right click and generate dropdown menu
+  $(document).ready(function() { 
+  var menu = $('.menu');//get the menu
+  $(document).on('contextmenu', function(e) {// right-click
+  e.preventDefault();//Prevent the default action: the normal right-click-menu to show
+  menu.css({
+    display: 'block',//show the menu
+    top: e.pageY,//make the menu be where you click (y)
+    left: e.pageX//make the menu be where you click (x)
+  });
+  });
+  $(document).click(function() { //When you left-click
+  menu.css({ display: 'none' });//Hide the menu
+  });
+  });
+  </script>
+
+</body>
+</html>
