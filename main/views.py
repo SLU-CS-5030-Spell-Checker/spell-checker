@@ -1,6 +1,6 @@
 ## Import necessary packages
 from django.http.response import JsonResponse
-import requests 
+# import requests 
 import json
 from django.shortcuts import render
 from urllib.parse import parse_qs, urlparse
