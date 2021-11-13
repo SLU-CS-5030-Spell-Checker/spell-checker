@@ -1,1 +1,1 @@
-web: gunicorn spell-checker.wsgi
+web: gunicorn spell-checker-main.wsgi
