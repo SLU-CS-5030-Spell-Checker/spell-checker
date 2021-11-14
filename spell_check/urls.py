@@ -25,5 +25,5 @@ urlpatterns = [
     path('ajax-test-view', views.index, name='ajax-test-view'),
     path('spell_check_irish', views_irish.spell_check, name='spell_check'),
     path('ajax-test-view_irish', views_irish.index, name='ajax-test-view_irish'),
+    #path('ajax-test-view/<str:word>/', views.index,name='ajax-test-view'),
 	path('', include('main.urls'))
-]
