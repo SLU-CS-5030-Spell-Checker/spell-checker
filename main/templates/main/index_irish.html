@@ -52,16 +52,16 @@ text-align:left;
   <div id="main">
   <span style="font-size:30px;cursor:pointer"</span>
 <a class="navbar-brand" href="#" >
-    Spell <strike>Chcek</strike>Check
+    Litriú <strike>Secieáil</strike>Seiceáil
   </a>
 
  </div>
  <div class="dropdown">
-  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Language Option
+  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Teanga Roghanna
   <span class="caret"></span></button>
   <ul class="dropdown-menu">
-    <li onclick="toggleLanguage('English')"><a href="ajax-test-view">English</a></li>
-    <li onclick="toggleLanguage('Irish')"><a href="ajax-test-view_irish">Irish</a></li>
+    <li onclick="toggleLanguage('English')"><a href="ajax-test-view">Béarla</a></li>
+    <li onclick="toggleLanguage('Irish')"><a href="ajax-test-view_irish">Gaeilge</a></li>
   
   </ul>
 </div>
@@ -79,7 +79,7 @@ text-align:left;
 
 <!--submit and clear buttons-->
  <!-- <button type="button" class="btn btn-outline-dark">Submit</button> -->
- <button type="button"  onclick="document.getElementById('myInput').value = ''" class="btn btn-outline-dark">Clear</button>
+ <button type="button"  onclick="document.getElementById('myInput').value = ''" class="btn btn-outline-dark">Soiléir</button>
 
 </div>
 
@@ -99,7 +99,7 @@ $('#myInput').mouseup(function(event){
       console.log(selection)
       $.ajax({
       type: "GET",
-      url:  'spell_check',
+      url:  'spell_check_irish',
       data: {'word':selection}, 
       success: function (response) {
    
