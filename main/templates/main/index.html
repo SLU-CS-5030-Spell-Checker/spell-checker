@@ -91,11 +91,15 @@ text-align:left;
 <!--submit and clear buttons-->
  <!-- <button type="button" class="btn btn-outline-dark">Submit</button> -->
  <button type="button"  onclick= "spell_submit()" class="btn btn-outline-dark">Submit</button>
- <button type="button"  onclick="document.getElementById('myInput').value = ''" class="btn btn-outline-dark">Clear</button>
+ <button type="button"  value= "Clear" onclick="javascript:eraseText();" class="btn btn-outline-dark">Clear</button>
 
 </div>
 
 <script>
+  function eraseText() {
+  document.getElementById("myInput").value = "";
+}
+  
 $('#myInput').mouseup(function(event){
   if(event.button == 2){
     var myInput = $('#myInput').get(0)
