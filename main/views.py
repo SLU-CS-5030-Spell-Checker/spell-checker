@@ -110,3 +110,20 @@ def spell_check(request):
     data ={'output': word_list}
     print(data)## for testing in console
     return JsonResponse(data)
+
+def spell_check2(request):
+    word_input= request.GET.get('word_list')
+    print(word_input)
+    word_list= json.loads(word_input)
+    print(word_list)
+    misspelled_words=[]
+    for i in word_list:
+        suggestion= wordFilter([i])
+        if not suggestion:
+            misspelled_words.append(i)
+        print(suggestion)  
+    print( misspelled_words)
+    data={'output':json.dumps(misspelled_words)}
+    print(data)
+    return JsonResponse(data)
+    
