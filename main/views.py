@@ -8,7 +8,7 @@ import re
 
 ##file = open(r'C:\Users\jca26\OneDrive\Documents\csci_5030\shakespeare.txt').read()
 ##justwords = re.findall(r'\w+', file.lower())
-
+##f1= open(r'C:\Users\jca26\OneDrive\Documents\csci_5030\singlewordfreq.txt').read()
 #returns frequency of word in corpus
 def errormodel(word):
     f = open(r'C:\Users\jca26\OneDrive\Documents\csci_5030\singlewordfreq.txt','rb')
@@ -60,6 +60,9 @@ def twoEditDist(word):
 def possible(word):
     return oneEditDist(word)
 
+def possible2(word):
+    return twoEditDist(word)
+
 #filters a list of words compared to the corpus
 def wordFilter(words):
     f = open(r'C:\Users\jca26\OneDrive\Documents\csci_5030\singlewordfreq.txt','rb')
@@ -76,9 +79,11 @@ def wordFilter(words):
 def correction(words):
     word = words.split()[-1]
     words = ' '.join(words.split()[:-1])
-    print(word)
-    print(words)
-    true = wordFilter(possible(word))
+    ##print(word)
+    ##print(words)
+    ## Short circuit idea is that words generated from fewer edits 
+    # are more likely than words with more edits
+    true = wordFilter(possible(word)) or wordFilter(possible2(word)) or[words]
     pc = []
     for w in true:
         pc.append(totalprob(words,w))
