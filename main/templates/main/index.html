@@ -96,15 +96,21 @@ text-align:left;
 </div>
 
 <script>
-  function eraseText() {
-  document.getElementById("myInput").value = "";
+function eraseText() {
+  $('#myInput.form-control').val("");
+  $('#myInput.form-control').highlightTextarea('destroy');
+  log.textContent = '';
 }
-  
+
 $('#myInput').mouseup(function(event){
   if(event.button == 2){
-    var myInput = $('#myInput').get(0)
+    //var myInput = $('#myInput').get(0)
+    var myInput = $('#myInput.form-control').get(0)
     selectionStart = myInput.selectionStart
     selectionEnd = myInput.selectionEnd
+    console.log(event.target)
+    console.log(selectionStart+"-"+selectionEnd)
+    console.log($('#myInput.form-control').get(0))
     if(myInput.value.substring(selectionEnd - 1, selectionEnd) == ' ')
     {
       selectionEnd = selectionEnd - 1
@@ -139,9 +145,11 @@ $('#myInput').mouseup(function(event){
 })
 function suggestionMouseUp(event){
   if(event.button == 0){
-    var myInput = $('#myInput').get(0)
+    var myInput = $('#myInput.form-control').get(0)
     var myInputUpdatedText = myInput.value.substring(0, selectionStart) + event.target.innerText + myInput.value.substring(selectionEnd, myInput.value.length)
     myInput.value = myInputUpdatedText
+    $('#myInput.form-control').highlightTextarea('destroy')
+    spell_submit()
   }
 }
 $(document).mouseup(function(event){
@@ -185,7 +193,9 @@ $(document).mouseup(function(event){
   }
 
   function spell_submit(){
-    var text= document.getElementById('myInput').value;
+    var text= $('#myInput.form-control').val()
+    console.log(text)
+    //var text= document.getElementById('myInput').value;
     //console.log(text.split(/[\s,?!\.]+/))
     var words= text.split(/[\s,?!\.]+/).filter(e => e);
     console.log(JSON.stringify(words))
@@ -200,7 +210,7 @@ $(document).mouseup(function(event){
           //const nGram_Suggestions= response['output']
           console.log(nGram_Suggestions)
           //console.log(typeof(nGram_Suggestions))
-          $('#myInput').highlightTextarea({
+          $('#myInput.form-control').highlightTextarea({
             words: nGram_Suggestions,
             id: 'myInput',
             color: '#FF000080'
