@@ -122,7 +122,7 @@ $('#myInput').mouseup(function(event){
       $.ajax({
       type: "GET",
       url:  'spell_check',
-      data: {'word':selection}, 
+      data: {'word':selection,'words':myInput.value}, 
       success: function (response) {
    
           const hunspellSuggestions= response['output']
@@ -216,14 +216,6 @@ $(document).mouseup(function(event){
             color: '#FF000080'
           });
           
-        
-          //hunspellSuggestions.forEach((item)=>{
-
-          //   $('#suggestionsList').append('<li class=suggestionText onmouseup="suggestionMouseUp(event)">' + item + '</li>')
-          // })
-
-          // $('#suggestions').css({top: event.clientY, left: event.clientX, position:'absolute'});
-          // $('#suggestions').show()
 
         }
       });
