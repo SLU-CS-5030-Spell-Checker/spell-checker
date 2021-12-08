@@ -6,6 +6,7 @@ import pickle
 def words(text): return re.findall(r'\w+', text.lower())
 t1 = open('bible.txt').read()
 WORDS = Counter(words(t1))
+WORDS=Counter(el for el in WORDS.elements() if WORDS[el] >= 100)
 
 def totalProb(words, word): 
     #lang model
