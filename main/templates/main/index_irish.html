@@ -29,6 +29,14 @@ text-align:left;
         #suggestionsList {list-style-type: none; padding-inline-start: 0px; margin-block-start: 0px; margin-block-end: 0px}
         .suggestionText:hover {color: #2693ff;cursor: pointer; }
         
+        
+  #myInput mark {
+    padding:0 1px;
+    color: '#FF000080';
+    margin:-1px -2px;
+    border-radius:0.5em;
+    border:1px solid rgb(255, 4, 46);
+  }
 </style>
 
 
@@ -36,6 +44,7 @@ text-align:left;
 <!--load in jquery, bootstrap, ajax-->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-highlighttextarea/3.1.3/jquery.highlighttextarea.min.css" type="text/css" />
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -43,6 +52,8 @@ text-align:left;
 <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.js" type="text/javascript"></script>
 <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-highlighttextarea/3.1.3/jquery.highlighttextarea.min.js" type="text/javascript"></script>
 
 </head>
 <body>
@@ -52,16 +63,16 @@ text-align:left;
   <div id="main">
   <span style="font-size:30px;cursor:pointer"</span>
 <a class="navbar-brand" href="#" >
-    Litriú <strike>Secieáil</strike>Seiceáil
+    Spell <strike>Chcek</strike>Check
   </a>
 
  </div>
  <div class="dropdown">
-  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Teanga Roghanna
+  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Language Option
   <span class="caret"></span></button>
   <ul class="dropdown-menu">
-    <li onclick="toggleLanguage('English')"><a href="ajax-test-view">Béarla</a></li>
-    <li onclick="toggleLanguage('Irish')"><a href="ajax-test-view_irish">Gaeilge</a></li>
+    <li onclick="toggleLanguage('English')"><a href="ajax-test-view">English</a></li>
+    <li onclick="toggleLanguage('Irish')"><a href="ajax-test-view_irish">Irish</a></li>
   
   </ul>
 </div>
@@ -70,7 +81,7 @@ text-align:left;
 
 <div align="center">
   <!--text area-->
-  <textarea class="form-control" id="myInput" rows="18" ></textarea>
+  <textarea class="form-control" id="myInput" rows="18" spellcheck="false" ></textarea>
     <p id="log"></p>
   <div id="suggestions">
     <ul id="suggestionsList">
@@ -79,16 +90,27 @@ text-align:left;
 
 <!--submit and clear buttons-->
  <!-- <button type="button" class="btn btn-outline-dark">Submit</button> -->
- <button type="button"  onclick="document.getElementById('myInput').value = ''" class="btn btn-outline-dark">Soiléir</button>
+ <button type="button"  onclick= "spell_submit()" class="btn btn-outline-dark">Submit</button>
+ <button type="button"  value= "Clear" onclick="javascript:eraseText();" class="btn btn-outline-dark">Clear</button>
 
 </div>
 
 <script>
+function eraseText() {
+  $('#myInput.form-control').val("");
+  $('#myInput.form-control').highlightTextarea('destroy');
+  log.textContent = '';
+}
+
 $('#myInput').mouseup(function(event){
   if(event.button == 2){
-    var myInput = $('#myInput').get(0)
+    //var myInput = $('#myInput').get(0)
+    var myInput = $('#myInput.form-control').get(0)
     selectionStart = myInput.selectionStart
     selectionEnd = myInput.selectionEnd
+    console.log(event.target)
+    console.log(selectionStart+"-"+selectionEnd)
+    console.log($('#myInput.form-control').get(0))
     if(myInput.value.substring(selectionEnd - 1, selectionEnd) == ' ')
     {
       selectionEnd = selectionEnd - 1
@@ -100,7 +122,7 @@ $('#myInput').mouseup(function(event){
       $.ajax({
       type: "GET",
       url:  'spell_check_irish',
-      data: {'word':selection}, 
+      data: {'word':selection,'words':myInput.value}, 
       success: function (response) {
    
           const hunspellSuggestions= response['output']
@@ -123,9 +145,11 @@ $('#myInput').mouseup(function(event){
 })
 function suggestionMouseUp(event){
   if(event.button == 0){
-    var myInput = $('#myInput').get(0)
+    var myInput = $('#myInput.form-control').get(0)
     var myInputUpdatedText = myInput.value.substring(0, selectionStart) + event.target.innerText + myInput.value.substring(selectionEnd, myInput.value.length)
     myInput.value = myInputUpdatedText
+    $('#myInput.form-control').highlightTextarea('destroy')
+    spell_submit()
   }
 }
 $(document).mouseup(function(event){
@@ -166,6 +190,36 @@ $(document).mouseup(function(event){
     else {
       description.innerHTML = "Show English Text";
     }
+  }
+
+  function spell_submit(){
+    var text= $('#myInput.form-control').val()
+    console.log(text)
+    //var text= document.getElementById('myInput').value;
+    //console.log(text.split(/[\s,?!\.]+/))
+    var words= text.split(/[\s,?!\.]+/).filter(e => e);
+    console.log(JSON.stringify(words))
+
+    $.ajax({
+      type: "GET",
+      url:  'spell_check2_irish',
+      data: {'word_list':JSON.stringify(words)}, 
+      success: function (response) {
+   
+          const nGram_Suggestions= JSON.parse(response['output'])
+          //const nGram_Suggestions= response['output']
+          console.log(nGram_Suggestions)
+          //console.log(typeof(nGram_Suggestions))
+          $('#myInput.form-control').highlightTextarea({
+            words: nGram_Suggestions,
+            id: 'myInput',
+            color: '#FF000080'
+          });
+          
+
+        }
+      });
+
   }
 </script>
 
